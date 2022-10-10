@@ -16,3 +16,8 @@
     '$1':'$2', 
 
     '''
+
+    '''python
+    pd.to_csv('',encoding='utf-8_sig')  # 编码带上sig，简中excel可以找到BOM
+
+    '''
