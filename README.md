@@ -30,7 +30,7 @@
 
 ---
 
-<iframe src="//player.bilibili.com/player.html?aid=390029462&bvid=BV1Vd4y1k7dH&cid=888841854&page=14" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+【Software Design in Python】 https://www.bilibili.com/video/BV1Vd4y1k7dH/?p=14&share_source=copy_web&vd_source=11141d7b83e628e7a2f8baf703e55130
      恶臭代码，写作中必须避免：
 
      """
