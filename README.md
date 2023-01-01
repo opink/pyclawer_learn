@@ -30,6 +30,8 @@
 
 ---
 
+# 过程脚本代码重构成面向对象复用
+
 【Software Design in Python】 https://www.bilibili.com/video/BV1Vd4y1k7dH/?p=14&share_source=copy_web&vd_source=11141d7b83e628e7a2f8baf703e55130
      恶臭代码，写作中必须避免：
 
@@ -42,3 +44,13 @@
      6. 方法的目标是责任分离，但是看到通过传入一个布尔标识，让我们在两者之间做出选择，从而将两种责任合二为一；改回单一职责
      7.Exception但是不用，别的代码可能会接过去；用不到就不用
      """
+
+---
+
+     """
+     1. strategypattern（依赖倒置的实现），面向消费者提供abc.ABC和abc.abstractmethod，实现开闭原则；
+     2. factorypattern，可以用两个dataclass具体地维护（字符串、元组等）索引对象————（其实是最早的只有oop程序，只有一个__call__方法的类不如简单地直接传入函数）；
+     3. 
+     """
+
+---
