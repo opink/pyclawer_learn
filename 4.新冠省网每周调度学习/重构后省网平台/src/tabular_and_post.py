@@ -2,25 +2,52 @@
 
 
 from abc import ABC, abstractmethod
-from pprint import pprint
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from enum import Enum
 import random
 import time
-from typing import Dict, List
-from src.tabular import MappingClass, Tabular
+from typing import Dict, List, Optional
 import pandas as pd
+from src.utlis_fn import half_year_ago, three_month_ago
 
 
-def pst_factory(cmodid: str) -> "Cmodid":
-    cmodid_to_pst = {
-                    '1010011167': Cmodid1010011167,
-                    '29117': Cmodid29117
-                    }
-    return cmodid_to_pst.get(cmodid, NotImplementedError)
+class MappingClass(Enum):
+    """代表posttable返回表单的mapping等级"""
+    ZHEN_JIE = "镇街"
+    MEN_ZHEN = "门诊"
+
+
+@dataclass
+class Tabular:
+    cmodid: str
+    fixeddaterange: Optional[List[str]] = None
+    age: Optional[List[int]] = None
+    mappingclass: Optional[MappingClass] = None
+
+    def get_device(self) -> 'Cmodid':
+        # 需定义接口类
+        cmodid_to_pst: Dict[str, "Cmodid"] = {
+                '1010011167': Cmodid1010011167,
+                '29117': Cmodid29117
+                }
+        return cmodid_to_pst.get(self.cmodid, NotImplementedError)
 
 
 class Cmodid(ABC):
     """代表网页接口"""
     date: str
+    weekago: str
+    a_month_ago: str
+    three_month_ago: str
+    half_year: str
+
+    def __init__(self, tabular: Tabular, dd: str):
+        if tabular.fixeddaterange:
+            self.date = self.fixeddaterange[0]
+            self.weekago = self.fixeddaterange[1]
+        else:
+            self.provide_datebean(dd)
 
     @abstractmethod
     def generate(self) -> Dict:
@@ -41,7 +68,7 @@ class Cmodid(ABC):
             # print(f'响应表格 ---  \n  {table}')  # 调试
             table = self.select_rows(table)
             return table
-        except:
+        except ValueError:
             print(f'检查一下post表单 : name = {name} , status_code={resp.status_code} \n \
             检查一下处理后表单 : dftype = {type(table)}')
 
@@ -50,11 +77,34 @@ class Cmodid(ABC):
         """从pst返回的原始数据表中选择需要的数据行"""
         """后转换为对应镇街或者对应门诊"""
 
+    def provide_datebean(self, dd: str):
+        """根据main函数提供的dd参数，制作需要的databean"""
+        if dd == "Week":
+            self.date = str(datetime.date(datetime.now()) - datetime.timedelta(1))  # 减一天
+            self.weekago = str(datetime.date(datetime.now()) - timedelta(7))  # 减一周
+            self.half_year = half_year_ago(
+                datetime.date(datetime.now()) - timedelta(1))
+        elif dd == "Today":
+            self.date = str(datetime.date(datetime.now()))  # 今天
+            self.weekago = str(datetime.date(datetime.now()))  # 今天
+            self.a_month_ago = str(datetime.date(datetime.now()) - timedelta(22))  # 减21+1天
+        elif dd == "Yesterday":
+            self.date = str(datetime.date(datetime.now()) - timedelta(1))  # 减一天
+            self.weekago = str(datetime.date(datetime.now()) - timedelta(1))  # 减一天
+            self.a_month_ago = str(datetime.date(datetime.now()) - timedelta(22))  # 减21+1天
+            self.three_month_ago = three_month_ago(
+                                datetime.date(datetime.now()) - timedelta(1))
+            self.half_year = half_year_ago(
+                                datetime.date(datetime.now()) - timedelta(1))
+        else:
+            raise ValueError("dd = Week or Yesterday or Today")
+
 
 class Cmodid29117(Cmodid):
     target_url = 'http://10.60.0.16:83/ShanDong/stat/regtypeGcb_query.action'  # 0-7岁儿童户籍类型占比统计表
 
-    def __init__(self, tabular: Tabular):
+    def __init__(self, tabular: Tabular, dd: str):
+        super().__init__(tabular, dd)
         self.age: List[int] = tabular.age
 
     def generate(self):
@@ -79,9 +129,10 @@ class Cmodid29117(Cmodid):
 class Cmodid1010011167(Cmodid):
     target_url = 'http://10.60.0.16:83/ShanDong/gjdc/xgRptJzjcArea_query.action'  # 新冠病毒疫苗分地区各剂次接种情况统计表
 
-    def __init__(self, tabular: Tabular):
-        self.date: str = tabular.date
-        self.weekago: str = tabular.weekago
+    def __init__(self, tabular: Tabular, dd: str):
+        super().__init__(tabular, dd)
+        # self.date: str = tabular.date
+        # self.weekago: str = tabular.weekago
         self.ageSel: List[int] = tabular.age
         self.mappingclass = tabular.mappingclass
 
@@ -119,6 +170,7 @@ class Cmodid1010011167(Cmodid):
         return table
 
 
+# mappingclass真正的对应
 zhenjie_mapping = {
         '系统单位': {
             0: '崖头镇寻山卫生院预防接种门诊 3710820101',
