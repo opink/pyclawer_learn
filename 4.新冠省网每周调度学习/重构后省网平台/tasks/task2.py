@@ -2,7 +2,7 @@
 from src.tabular_and_post import Tabular
 from src.utlis_fn import do_save
 
-
+# task2: 各门诊0-7周岁户籍各类型占比
 task_duty = {
     # 户籍类型占比统计表，不包含狂犬门诊，0-7岁儿童0-1、1-2、2-3...7-8岁
     # '8-1-1': {'cmodid': '29117', 'age': [0, 1, 2, 3, 4, 5, 6, 7]} 

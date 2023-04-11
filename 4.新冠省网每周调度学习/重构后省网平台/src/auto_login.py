@@ -15,8 +15,8 @@ def get_cookies():
     cruser = webdriver.Firefox()
     cruser.get(denglu_link)
     time.sleep(random.randint(1, 2))
-    cruser.find_element_by_id('username').send_keys('******')
-    cruser.find_element_by_id('password').send_keys('******')
+    cruser.find_element_by_id('username').send_keys('***')
+    cruser.find_element_by_id('password').send_keys('***')
     cruser.find_element_by_id('vaildCode').send_keys('')
     time.sleep(random.randint(1, 2))
     WebDriverWait(cruser,

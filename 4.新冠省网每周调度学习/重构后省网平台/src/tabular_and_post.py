@@ -1,13 +1,12 @@
 # 根据Tabular的cmodid选择对应post表单并接收其余参数，返回需要的待处理表并保存在确认位置
 
-
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 import random
 import time
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 import pandas as pd
 from src.utlis_fn import half_year_ago, three_month_ago
 
@@ -21,12 +20,12 @@ class MappingClass(Enum):
 @dataclass
 class Tabular:
     cmodid: str
-    fixeddaterange: Optional[List[str]] = None
+    dd: Optional[List[str]] = None  # 转移到了Cmodid的初始化里
     age: Optional[List[int]] = None
     mappingclass: Optional[MappingClass] = None
 
     def get_device(self) -> 'Cmodid':
-        # 需定义接口类
+        # 路由接口函数（需定义如下接口的各个Cmodid类）
         cmodid_to_pst: Dict[str, "Cmodid"] = {
                 '1010011167': Cmodid1010011167,
                 '29117': Cmodid29117
@@ -38,16 +37,18 @@ class Cmodid(ABC):
     """代表网页接口"""
     date: str
     weekago: str
-    a_month_ago: str
-    three_month_ago: str
-    half_year: str
+    a_month_ago: Optional[str] = None
+    three_month_ago: Optional[str] = None
+    half_year: Optional[str] = None
 
-    def __init__(self, tabular: Tabular, dd: str):
-        if tabular.fixeddaterange:
-            self.date = self.fixeddaterange[0]
-            self.weekago = self.fixeddaterange[1]
-        else:
+    def __init__(self, tabular: Tabular, dd: Union[Optional[List[str]], str]):
+        if isinstance(dd, list):
+            self.weekago = dd[0]  # 起始日期
+            self.date = dd[1]  # 终止日期
+        elif isinstance(dd, str):
             self.provide_datebean(dd)
+        else:
+            raise ValueError("dd = 'Week' or 'Yesterday' or 'Today' or List[str, str]")
 
     @abstractmethod
     def generate(self) -> Dict:
@@ -55,22 +56,25 @@ class Cmodid(ABC):
 
     def pst(self, requests_session, name) -> pd.DataFrame:
         """发送请求并获得返回原始数据表"""
+        print(f"{name} send time : {time.time()}")
         resp = requests_session.post(self.target_url, data=self.generate())
-        time.sleep(random.randint(1, 2) * 0.2)
+        # time.sleep(random.randint(1, 2) * 0.2)
         resp.encoding = resp.apparent_encoding
+        print(f"{name} received : {time.time()}")
         print(f'name = {name}, encoding = {resp.encoding}, status_code={resp.status_code}'
         )
         # print(resp.text)
         table = pd.read_html(resp.text, encoding='utf-8')[-1]
         # print(table) # 调试
-        try:
-            # 接着处理表格，转换对应镇街
-            # print(f'响应表格 ---  \n  {table}')  # 调试
-            table = self.select_rows(table)
-            return table
-        except ValueError:
-            print(f'检查一下post表单 : name = {name} , status_code={resp.status_code} \n \
-            检查一下处理后表单 : dftype = {type(table)}')
+        return table, resp.status_code, name
+        # try:
+        #     # 接着处理表格，转换对应镇街
+        #     # print(f'响应表格 ---  \n  {table}')  # 调试
+        #     table = self.select_rows(table)
+        #     return table
+        # except ValueError:
+        #     print(f'检查一下post表单 : name = {name} , status_code={resp.status_code} \n \
+        #     检查一下处理后表单 : dftype = {type(table)}')
 
     @abstractmethod
     def select_rows(self, table: pd.DataFrame) -> pd.DataFrame:
@@ -81,12 +85,12 @@ class Cmodid(ABC):
         """根据main函数提供的dd参数，制作需要的databean"""
         if dd == "Week":
             self.date = str(datetime.date(datetime.now()) - datetime.timedelta(1))  # 减一天
-            self.weekago = str(datetime.date(datetime.now()) - timedelta(7))  # 减一周
+            self.weekago = str(datetime.date(datetime.now()) - timedelta(8))  # 减8天
             self.half_year = half_year_ago(
                 datetime.date(datetime.now()) - timedelta(1))
         elif dd == "Today":
             self.date = str(datetime.date(datetime.now()))  # 今天
-            self.weekago = str(datetime.date(datetime.now()))  # 今天
+            self.weekago = str(datetime.date(datetime.now()) - timedelta(7)) # 减一周
             self.a_month_ago = str(datetime.date(datetime.now()) - timedelta(22))  # 减21+1天
         elif dd == "Yesterday":
             self.date = str(datetime.date(datetime.now()) - timedelta(1))  # 减一天
@@ -142,8 +146,8 @@ class Cmodid1010011167(Cmodid):
                 'skipValue': 4,
                 'areaCode':
                 '371082010100,371082010200,371082010300,371082010400,371082010500,371082030100,371082030200,371082038100,371082038200,371082050100,371082050200,371082058100,371082058200,371082070100,371082078100,371082080100,371082088100,371082090100,371082098100,371082100100,371082108100,371082110100,371082118100,371082130100,371082138100,371082140100,371082148100,371082180100,371082180200,371082188100,371082188200,371082190100,371082190200,371082190300,371082190400,371082190500,371082250100,371082258100,371082270100,371082270200,371082278100,371082278200,371082280100,371082280400,371082288100,371082288200,371082298100,371082304100,371082308100,371082318100,371082328100,371082338100,371082340300,371082358100,371082368100,371082374100,371082378100,371082378200',
-                'datebean.beginDate': self.date,
-                'datebean.endDate': self.weekago,
+                'datebean.beginDate': self.weekago,
+                'datebean.endDate': self.date,
                 'chkAge': True,
                 '__checkbox_chkAge': True,
                 # 'age':[60,65,70],  # 不重要
@@ -151,7 +155,7 @@ class Cmodid1010011167(Cmodid):
                 }
 
     def select_rows(self, table):
-        table = table.copy().iloc[1:59, 1:12].astype(float).astype(int)
+        table = table.copy().iloc[1:59, 1:15].astype(float).astype(int)
         # print(f'astype后表格 ---  \n  {table}')
         table = table.reset_index(
                     drop=True)  # 重置index以便对应镇街Series的index
