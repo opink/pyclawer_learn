@@ -28,6 +28,10 @@
     excel中 身份证vlookup 需要特别的公式才能扩展到15位以后→在前面加上 = vlookup("*"&A2,A:E,2,False)
     """
 
+    """
+    python使用venv的pip命令,可以cd到venv的python.exe文件处,使用CMD '.\python.exe -m pip install xxx'命令行来安装到当前venv环境
+    """
+
 ---
 
 # 过程脚本代码重构成面向对象复用
