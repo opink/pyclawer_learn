@@ -27,6 +27,15 @@
     excel中 查重身份证 需要特别的公式才能扩展到15位以后→  =countif(A2:A,A2&"*")
     excel中 身份证vlookup 需要特别的公式才能扩展到15位以后→在前面加上 = vlookup("*"&A2,A:E,2,False)
     """
+    
+    """python
+    # python身份证重复
+    df1 = df.copy()
+    df1['重复次数'] = df1.groupby("身份证号码")["身份证号码"].transform('count')    
+    df1.sort_values(by=['重复次数','身份证号码'], ascending=False, inplace=True)
+    df1[df1['重复次数'] >=2 ]
+    """
+
 
     """
     python使用venv的pip命令,可以cd到venv的python.exe文件处,使用CMD '.\python.exe -m pip install xxx'命令行来安装到当前venv环境
