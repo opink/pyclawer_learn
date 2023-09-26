@@ -7,6 +7,7 @@
 3. 学习爬虫基本的内容；-- 包含文件 爬虫基本学习.ipynb
 4. 新冠省网每周调度学习；-- 包含文件 省网每周新冠已经可用.ipynb
 5. AKshareSDK接口重封装学习；-- 包含文件 netsFinding.ipynb , ./backups/｛DATE｝/*.xlsx , ./afiles(TODO)/
+6. 自动化excel；-- 包含文件 自动化excel.ipynb
 
 
 ---
