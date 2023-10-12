@@ -27,6 +27,7 @@
 - [norm] gg : 移动到文件头
 - [norm] G : 移动到文件尾
 - [norm] 20gg : 移动到第20行
+- [norm] % : 移动到配对的括号处
 
 ### 2.1 光标在文件内和不同文件间跳跃追踪/返回
 - [norm] \<C-o> : 光标跳转至上次编辑位置
@@ -34,8 +35,15 @@
 - [norm] \<C-^> : 光标跳转至上次编辑文件
 
 ## 3. 多按键动作
-- [norm] rx : 替换单个字符为x 
+- [norm] rx : 替换单个字符为x
+- [norm] zc : 折叠代码
+- [norm] zo : 打开折叠
 - [norm] \<learder> \<learder> s : EASYMOTION - 快速搜索跳转
+- [norm] fcrC : find c replace C
+- [norm] 3y2/foop : 复制并粘贴3次两个foo之间的内容
+
+> 执行-重复.-回退u 工作流，只在必要时使用次数前缀
+
 ### 3.1 动作+ {count} + 动作类型
 - [norm] d2j : 删除当前行和下两行，共3行
 - [norm] d2f' : 删除光标至本行第2个'处
@@ -48,6 +56,9 @@
 - w : word
 - s : sentence
 - p : paragraph
+- [vscvim] e : entire file
+- [vscvim] q : 引号(单、双、反)
+- [vscvim] a : 参数
 - b | ( | ) : block surrounded by ( )
 - B | { | } : block surrounded by { }
 - \< | > : surrounded by \< >
