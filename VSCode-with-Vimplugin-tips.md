@@ -40,15 +40,15 @@
 - [norm] zo : 打开折叠
 - [norm] \<learder> \<learder> s : EASYMOTION - 快速搜索跳转
 - [norm] fcrC : find c replace C
-- [norm] 3y2/foop : 复制并粘贴3次两个foo之间的内容
 
-> 执行-重复.-回退u 工作流，只在必要时使用次数前缀
+> 执行-重复.-回退u 工作流
 
 ### 3.1 动作+ {count} + 动作类型
 - [norm] d2j : 删除当前行和下两行，共3行
 - [norm] d2f' : 删除光标至本行第2个'处
 - [norm] dt' : 删除光标至本行第1个'前
 - [norm] d/hello : 删除光标至第一个hello之间的所有字符
+- [norm] y2/foo[enter]p : 复制并粘贴从光标处到第2个发现的foo之间的内容
 - [norm] c2w : 从光标处向后替换2个词并进入insert模式
 
 ### 3.2 动作+ {i or a} + 文本类型
