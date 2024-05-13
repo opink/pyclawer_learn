@@ -32,6 +32,11 @@
     excel中 复制大量文本数字到另一张表，把源表关闭后再从新表内转换速度会快非常多
     """
     
+    """
+    PowerShell批量修改文件夹内的文件名 ls -i *.xlsx -r | foreach { ren $_.FullName $_.FullName.Replace("2023年1-12月","2024年1-3月")}
+    """
+    
+    
     """python
     # python身份证重复
     df1 = df.copy()
