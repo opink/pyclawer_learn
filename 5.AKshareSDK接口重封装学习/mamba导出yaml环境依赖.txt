@@ -1,0 +1,14 @@
+创建环境
+mamba create -n myenv python=3.10 numpy pandas
+
+！！！激活环境要用conda 
+conda activate myenv
+
+移除包
+mamba remove scipy
+
+导出环境
+mamba env export > enviroment.yml
+
+从YAML文件创建环境
+mamba env create -f environment.yml
