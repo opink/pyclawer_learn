@@ -33,7 +33,12 @@
     """
     
     """
-    PowerShell批量修改文件夹内的文件名 ls -i *.xlsx -r | foreach { ren $_.FullName $_.FullName.Replace("2023年1-12月","2024年1-3月")}
+    PowerShell批量修改文件夹内的文件名
+    一、
+    ls -i *.xlsx -r | foreach { ren $_.FullName $_.FullName.Replace("2023年1-12月","2024年1-3月")}
+    二、
+    get-childitem *.xlsx | rename-item -newname { $_.Name -replace '1-3', '1-6'}
+    
     """
     
     
