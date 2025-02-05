@@ -57,6 +57,17 @@
 
 ---
 
+【streamlit库在使用中的一些问题】
+(涉及到一个mainxxx.js 文件中) '*.at(-1)' 的写法需要ECS2022标准，有些老浏览器在使用自带表格控件的时候浏览器会报错，需改为 '*[*.length - 1]'。
+想查找并修改对应的前端js文件，希望使用rg搜索到
+但是碰到单行的js文件。可使用
+rg -l "   "  
+仅显示查询到的文件名
+
+linux和windows都在envs文件夹里可查
+
+---
+
 # 过程脚本代码重构成面向对象复用
 
 【Software Design in Python】 https://www.bilibili.com/video/BV1Vd4y1k7dH/?p=14&share_source=copy_web&vd_source=11141d7b83e628e7a2f8baf703e55130
